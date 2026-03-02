@@ -1,1 +1,74 @@
-# Datasheet for Dataset: Simulated Droplet scRNA-seq with Branching Ground Truth## MotivationThis dataset is designed to provide a droplet-realistic, count-based benchmark for trajectory inference, including:- a continuous progression (pseudotime),- a single bifurcation into two terminal fates,- shared and branch-specific gene programs,- realistic library-size heterogeneity and overdispersion.It supports quantitative auditing of pseudotime recovery because the ground truth is known.## Composition- **Instances:** single cells (rows)- **Features:** genes (columns), integer UMI counts- **Typical size (default):** ~3,500 cells ? ~2,200 genes (configurable)- **Sparsity:** high, typical of droplet scRNA-seq### Ground-truth annotationsSaved in `obs_raw.csv` and `obs_with_pseudotime.csv`:- `true_pseudotime` in [0, 1]- `true_branch` in {pre, A, B}- `true_cell_type` in {CD8 T, CD4 T, NK, Prolif T}- `library_size` total UMIs per cell## Collection processNot applicable, the dataset is simulated.## Simulation process (high-level)1. Sample `true_pseudotime` uniformly in [0, 1].2. Define a split time; after this time, assign each cell to branch A or B with a configurable probability.3. Construct gene programs:   - increasing and decreasing programs along pseudotime,   - branch-specific activation post-split,   - marker-like sets for interpretability.4. Sample library sizes from a log-normal distribution to mimic droplet depth heterogeneity.5. Generate counts from a negative binomial (Gamma–Poisson) model with gene-specific dispersion.## Preprocessing and derived artifactsThe pipeline generates:- `counts_raw.npz` sparse counts- log-normalized and HVG-restricted matrices in memory- `pca_Z.npy` PCA coordinates- `diffusion_Y.npy` diffusion coordinates- pseudotime and lineage assignments in `obs_with_pseudotime.csv`## Uses### Recommended uses- Benchmarking pseudotime and branching recovery.- Stress-testing preprocessing and graph construction.- Teaching trajectory inference concepts with ground truth.### Out-of-scope uses- Any clinical or biomedical inference about real biology.- Generalizing quantitative accuracy from simulation to real datasets without validation.## DistributionThe dataset is generated on demand by running the pipeline.  Outputs are written to:- `results_trajectory_sim_no_scanpy/data/`## Maintenance- Simulation parameters and random seed are recorded in `simulation_metadata.json`.- The dataset can be regenerated exactly given the same versioned code and parameters.## Known limitations- No batch effects, ambient RNA, doublets, or cell-cycle confounding are explicitly simulated by default.- The topology is a single bifurcation; more complex structures (multiple branches, loops) require extension.- Parameters are tuned for droplet-like behavior but are not fitted to a particular real dataset.## Recommended citations These references motivate the statistical and algorithmic assumptions:- Svensson, V. (2020). Droplet scRNA-seq is not zero-inflated. https://www.nature.com/articles/s41587-019-0379-5  - Hafemeister, C., & Satija, R. (2019). Regularized negative binomial regression normalization. https://genomebiology.biomedcentral.com/articles/10.1186/s13059-019-1874-1  - Haghverdi, L., et al. (2016). Diffusion pseudotime for branching. https://www.nature.com/articles/nmeth.3971
+# Datasheet for Dataset: Simulated Droplet scRNA-seq with Branching Ground Truth
+
+## Motivation
+This dataset is designed to provide a droplet-realistic, count-based benchmark for trajectory inference, including:
+- a continuous progression (pseudotime),
+- a single bifurcation into two terminal fates,
+- shared and branch-specific gene programs,
+- realistic library-size heterogeneity and overdispersion.
+
+It supports quantitative auditing of pseudotime recovery because the ground truth is known.
+
+## Composition
+- **Instances:** single cells (rows)
+- **Features:** genes (columns), integer UMI counts
+- **Typical size (default):** ~3,500 cells  ~2,200 genes (configurable)
+- **Sparsity:** high, typical of droplet scRNA-seq
+
+### Ground-truth annotations
+Saved in `obs_raw.csv` and `obs_with_pseudotime.csv`:
+- `true_pseudotime` in [0, 1]
+- `true_branch` in {pre, A, B}
+- `true_cell_type` in {CD8 T, CD4 T, NK, Prolif T}
+- `library_size` total UMIs per cell
+
+## Collection process
+Not applicable, the dataset is simulated.
+
+## Simulation process (high-level)
+1. Sample `true_pseudotime` uniformly in [0, 1].
+2. Define a split time; after this time, assign each cell to branch A or B with a configurable probability.
+3. Construct gene programs:
+   - increasing and decreasing programs along pseudotime,
+   - branch-specific activation post-split,
+   - marker-like sets for interpretability.
+4. Sample library sizes from a log-normal distribution to mimic droplet depth heterogeneity.
+5. Generate counts from a negative binomial (Gamma√êPoisson) model with gene-specific dispersion.
+
+## Preprocessing and derived artifacts
+The pipeline generates:
+- `counts_raw.npz` sparse counts
+- log-normalized and HVG-restricted matrices in memory
+- `pca_Z.npy` PCA coordinates
+- `diffusion_Y.npy` diffusion coordinates
+- pseudotime and lineage assignments in `obs_with_pseudotime.csv`
+
+## Uses
+### Recommended uses
+- Benchmarking pseudotime and branching recovery.
+- Stress-testing preprocessing and graph construction.
+- Teaching trajectory inference concepts with ground truth.
+
+### Out-of-scope uses
+- Any clinical or biomedical inference about real biology.
+- Generalizing quantitative accuracy from simulation to real datasets without validation.
+
+## Distribution
+The dataset is generated on demand by running the pipeline.  
+Outputs are written to:
+- `results_trajectory_sim_no_scanpy/data/`
+
+## Maintenance
+- Simulation parameters and random seed are recorded in `simulation_metadata.json`.
+- The dataset can be regenerated exactly given the same versioned code and parameters.
+
+## Known limitations
+- No batch effects, ambient RNA, doublets, or cell-cycle confounding are explicitly simulated by default.
+- The topology is a single bifurcation; more complex structures (multiple branches, loops) require extension.
+- Parameters are tuned for droplet-like behavior but are not fitted to a particular real dataset.
+
+## Recommended citations 
+These references motivate the statistical and algorithmic assumptions:
+- Svensson, V. (2020). Droplet scRNA-seq is not zero-inflated. https://www.nature.com/articles/s41587-019-0379-5  
+- Hafemeister, C., & Satija, R. (2019). Regularized negative binomial regression normalization. https://genomebiology.biomedcentral.com/articles/10.1186/s13059-019-1874-1  
+- Haghverdi, L., et al. (2016). Diffusion pseudotime for branching. https://www.nature.com/articles/nmeth.3971
